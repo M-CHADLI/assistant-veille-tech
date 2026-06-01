@@ -2,7 +2,7 @@ services:
   chromadb:
     image: chromadb/chroma:0.5.20
     ports:
-      - "8001:8000"
+      - "8002:8000"
     volumes:
       - .docker-data/chroma:/chroma/chroma
     environment:

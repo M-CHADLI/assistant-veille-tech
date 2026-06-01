@@ -64,7 +64,7 @@ make up                       # docker compose up -d (chromadb + backend + front
 
 - Backend : http://localhost:8000 (`/health`, `/topics`, `/chat`)
 - Frontend : http://localhost:3000
-- ChromaDB : http://localhost:8001
+- ChromaDB : http://localhost:8002
 
 Tests :
 
