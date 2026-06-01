@@ -1,0 +1,50 @@
+services:
+  chromadb:
+    image: chromadb/chroma:0.5.20
+    ports:
+      - "8001:8000"
+    volumes:
+      - .docker-data/chroma:/chroma/chroma
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      AZURE_AI_INFERENCE_ENDPOINT: ${AZURE_AI_INFERENCE_ENDPOINT:-}
+      AZURE_AI_INFERENCE_API_KEY: ${AZURE_AI_INFERENCE_API_KEY:-}
+      AZURE_AI_INFERENCE_MODEL: ${AZURE_AI_INFERENCE_MODEL:-Kimi-K2.6}
+      CHROMA_URL: http://chromadb:8000
+      CHROMA_COLLECTION: ${CHROMA_COLLECTION:-articles}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-intfloat/multilingual-e5-small}
+      NEWS_API_KEY: ${NEWS_API_KEY:-}
+      NEWS_API_BASE_URL: ${NEWS_API_BASE_URL:-https://newsapi.org/v2}
+    volumes:
+      - ./app:/srv/app
+      - ./scripts:/srv/scripts
+    depends_on:
+      chromadb:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    depends_on:
+      - backend
