@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     chroma_collection: str = "articles"
     embedding_model: str = "intfloat/multilingual-e5-small"
 
-    news_api_key: str = ""
+    news_api_key: str = "96bd26f67c1e4fe88c863bf8f9b71ecf"
     news_api_base_url: str = "https://newsapi.org/v2"
 
     backend_port: int = 8000

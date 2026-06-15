@@ -98,6 +98,15 @@ def _split_tags(raw: Any) -> list[str]:
     return []
 
 
+def _detect_trending(cards: list[ArticleCard], threshold: int = 3) -> list[str]:
+    """Détecte les tendances : tags qui apparaissent 3+ fois dans les résultats."""
+    tag_counts: dict[str, int] = {}
+    for card in cards:
+        for tag in card.tags:
+            tag_counts[tag] = tag_counts.get(tag, 0) + 1
+    return sorted([tag for tag, count in tag_counts.items() if count >= threshold])
+
+
 async def compose_answer(
     *,
     question: str,
@@ -106,6 +115,7 @@ async def compose_answer(
     fresh_articles: list[dict[str, Any]],
 ) -> ChatResponse:
     cards = _build_cards(retrieved_chunks, fresh_articles)
+    trending = _detect_trending(cards)
 
     if not retrieved_chunks and not fresh_articles:
         return ChatResponse(
@@ -114,6 +124,7 @@ async def compose_answer(
                 "l'actualité collectée. Lance une ingestion pour alimenter la veille."
             ),
             cards=[],
+            trending=[],
             status="empty",
         )
 
@@ -125,6 +136,7 @@ async def compose_answer(
                 "LLM non configuré — voici les sources brutes."
             ),
             cards=cards,
+            trending=trending,
             status="degraded",
         )
 
@@ -147,7 +159,7 @@ async def compose_answer(
         logger.warning("LLM call failed: %s", exc)
         answer = f"Synthèse indisponible (erreur LLM). {len(cards)} article(s) référencé(s)."
 
-    return ChatResponse(answer=answer, cards=cards, status="ok")
+    return ChatResponse(answer=answer, cards=cards, trending=trending, status="ok")
 
 
 def _extract_answer(raw: str) -> str:

@@ -11,7 +11,9 @@ class Article(BaseModel):
     date: datetime | None = None
     content: str
     url: HttpUrl | str
+    author: str | None = None
     tags: list[str] = Field(default_factory=list)
+    type: Literal["batch", "online", "chat"] = "batch"
 
 
 class ArticleCard(BaseModel):
@@ -37,3 +39,4 @@ class ChatResponse(BaseModel):
     answer: str
     cards: list[ArticleCard]
     status: Literal["ok", "empty", "degraded"] = "ok"
+    trending: list[str] = Field(default_factory=list)  # tags qui apparaissent 3+ fois

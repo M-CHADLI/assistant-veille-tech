@@ -45,3 +45,10 @@ out/
 *.sqlite
 *.db
 chroma-data/
+
+# Explicative files (not required for delivery)
+GUIDE_COMPLET_PROJET.md
+EXPLICATION_MODIFICATIONS_2026-06-15.md
+VERIFICATION_BRIEF.md
+DELIVERABLES.md
+CONTEXTE_COMPLET_PROJET.md

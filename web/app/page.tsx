@@ -8,6 +8,7 @@ import {
   fetchTopics,
   postChat,
 } from "../lib/api";
+import { HowItWorks } from "./HowItWorks";
 
 const TAG_COLORS = [
   "bg-indigo-500/20 text-indigo-200 border-indigo-400/40",
@@ -81,6 +82,12 @@ export default function Page() {
         <p className="mt-2 text-sm text-neutral-400">
           Assistant interne pour suivre les tendances et les outils de l'écosystème.
         </p>
+        <a
+          href="#comment-ca-marche"
+          className="mt-3 inline-block text-xs text-indigo-300 underline-offset-4 hover:underline"
+        >
+          ↓ Comment ça marche ?
+        </a>
       </header>
 
       <section className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
@@ -174,6 +181,24 @@ export default function Page() {
               )}
             </div>
 
+            {resp.trending.length > 0 && (
+              <div className="mb-6 rounded-xl border border-amber-400/30 bg-amber-500/10 p-4">
+                <div className="text-xs uppercase tracking-wider text-amber-300">
+                  📈 Tendances (3+ articles)
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {resp.trending.map((tag) => (
+                    <span
+                      key={tag}
+                      className={`rounded-full border px-3 py-1 text-sm font-medium ${tagColor(tag)}`}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {resp.cards.length === 0 ? (
               <div className="rounded-lg border border-white/10 bg-white/5 p-6 text-center text-sm text-neutral-400">
                 Aucun résultat pour le moment.
@@ -194,6 +219,8 @@ export default function Page() {
           </div>
         )}
       </section>
+
+      <HowItWorks />
     </main>
   );
 }
